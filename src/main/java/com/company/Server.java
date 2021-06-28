@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server extends Thread {
+public class Server {
 
     private static final int port = 8001;
     private static final String server = "127.0.0.1";
@@ -20,7 +20,8 @@ public class Server extends Thread {
 
 
 
-    public static ArrayList<ClientHandler> clients = new ArrayList<>();
+    public static ArrayList<Player> clients = new ArrayList<>();
+    public static ArrayList<Match> matches = new ArrayList<>();
     private static ExecutorService pool = Executors.newFixedThreadPool(10);
     private static boolean serverIsRunning = true;
 
@@ -34,7 +35,7 @@ public class Server extends Thread {
             System.out.println("Connected to client... ");
 
             ClientHandler clientThread = new ClientHandler(client);
-            clients.add(clientThread);
+            clients.add(new Player(clientThread));
             pool.execute(clientThread);
         }
     }
