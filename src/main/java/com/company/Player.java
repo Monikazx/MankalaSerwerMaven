@@ -1,12 +1,12 @@
 package com.company;
 
 public class Player {
-    public String ip;
+    public ClientHandler client;
     public String name;
 
-    public Player(String ip, String name){
-        this.ip = ip;
-        this.name = name;
+    public Player(ClientHandler client){
+        this.client = client;
+        this.name = null;
     }
 
 
