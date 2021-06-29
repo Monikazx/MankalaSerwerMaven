@@ -68,10 +68,7 @@ public class ClientHandler implements Runnable{
 
                         break;
                     case  Messages.Client.Move:
-                        Match match = Server.matches.stream().filter(x->x.playerWhite.client == this).findFirst().get();
-                        if (match == null) {
-                            match = Server.matches.stream().filter(x->x.playerBlack.client == this).findFirst().get();
-                        }
+                        Match match = Server.matches.stream().filter(x->x.playerWhite.client == this || x.playerBlack.client == this).toList().get(0);
 
                         if (this == match.playerWhite.client) {
                             match.playerBlack.client.out.println(message);
