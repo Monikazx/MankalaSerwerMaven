@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable{
 
                 switch(request[0])
                 {
-                    case Messages.Client.Host: // action;socket;id;name
+                    case Messages.Client.Host:
                         if(!Server.matches.stream().anyMatch(x-> x.playerWhite.client == this))
                         {
                             Server.matches.add(new Match(Server.clients.stream().filter(x -> x.client == this).toList().get(0)));
@@ -57,10 +57,16 @@ public class ClientHandler implements Runnable{
                         }
                         sendListOfMatches();
                         break;
-                    case Messages.Client.Join: // action;socket1;socket2 (tego gracza);id;login
+                    case Messages.Client.Join:
+                        Server.matches.stream().filter(x-> x.playerWhite.name.equals(request[1])).findFirst().get().playerBlack =
+                                Server.clients.stream().filter(x->x.client == this).findFirst().get();
+
+                        Match m = Server.matches.stream().filter(x-> x.playerWhite.name.equals(request[1])).findFirst().get();
+                        m.playerBlack.client.out.println(Messages.Server.Start+";BLACK");
+                        m.playerWhite.client.out.println(Messages.Server.Start+";WHITE");
 
                         break;
-                    case Messages.Client.Login: // action;login;haslo
+                    case Messages.Client.Login:
                         String sql = "SELECT id, imie, nazwisko FROM dane_studentow WHERE imie='"+request[1]+"' AND nazwisko='"+request[2]+"';";
                         try {
                             ResultSet resultSet = PolaczBD.pobierzDane(sql);
@@ -99,7 +105,7 @@ public class ClientHandler implements Runnable{
                 e.printStackTrace();
             }
             Server.clients.removeIf(x-> x.client == this);
-            Server.matches.removeIf(x-> x.playerWhite.client==this || x.playerBlack.client==this);
+            Server.matches.removeIf(x-> x.playerWhite.client==this || (x.playerBlack!=null && x.playerBlack.client==this));
             System.err.println("Gracz został rozłączony. Aktualna liczba graczy ->" + Server.clients.size());
         }
     }
