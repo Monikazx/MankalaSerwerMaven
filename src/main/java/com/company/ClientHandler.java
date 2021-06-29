@@ -39,7 +39,8 @@ public class ClientHandler implements Runnable{
             out.println(listOfMatches);
 
             while (true) {
-                String request[] = in.readLine().split(";");
+                String message = in.readLine();
+                String request[] = message.split(";");
 
                 Arrays.stream(request).forEach(x-> System.out.print(x));
                 System.out.println();
@@ -64,6 +65,20 @@ public class ClientHandler implements Runnable{
                         Match m = Server.matches.stream().filter(x-> x.playerWhite.name.equals(request[1])).findFirst().get();
                         m.playerBlack.client.out.println(Messages.Server.Start+";BLACK");
                         m.playerWhite.client.out.println(Messages.Server.Start+";WHITE");
+
+                        break;
+                    case  Messages.Client.Move:
+                        Match match = Server.matches.stream().filter(x->x.playerWhite.client == this).findFirst().get();
+                        if (match == null) {
+                            match = Server.matches.stream().filter(x->x.playerBlack.client == this).findFirst().get();
+                        }
+
+                        if (this == match.playerWhite.client) {
+                            match.playerBlack.client.out.println(message);
+                        }
+                        else {
+                            match.playerWhite.client.out.println(message);
+                        }
 
                         break;
                     case Messages.Client.Login:
